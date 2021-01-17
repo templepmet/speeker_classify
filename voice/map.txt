@@ -1,0 +1,7 @@
+0 hirano
+1 kominami
+2 matsuda
+3 nakagawa
+4 qiu
+5 tejima
+6 teranishi
