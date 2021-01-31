@@ -6,6 +6,9 @@ from torch.utils.data import DataLoader, Dataset, random_split
 import torchaudio
 from torchvision import transforms
 import numpy as np
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score
+from sklearn.metrics import recall_score,f1_score
 
 torchaudio.set_audio_backend("sox_io")
 
@@ -267,6 +270,9 @@ def SpeechML(train_dataset=None, val_test_dataset=None, *,
 
     cos_th = 0.5
 
+    yy_pred = [] # 予測のデータ
+    yy_true = [] # 実際のデータ
+
     y_preds = torch.Tensor()
     all_nums = 0
     cnt = 0
@@ -302,13 +308,32 @@ def SpeechML(train_dataset=None, val_test_dataset=None, *,
         
         nums = len(label)
         for i in range(nums):
+            yy_true.append(label[i] == -1)
+            yy_pred.append(preds[i] == -1)
             if label[i] == preds[i]:
                 cnt += 1
         all_nums += nums
 
-        print(label)
-        print(preds)
-        print(preds_cos)
+        # print(label)
+        # print(preds)
+        # print(preds_cos)
+
+    print()
+
+    # 混同行列作成
+    print('混同行列\n{}'.format(confusion_matrix(yy_true,yy_pred)))
+    
+    # 正解率
+    print('正解率: {0:.3f}'.format(accuracy_score(yy_true, yy_pred)))
+    
+    # 適合率算出
+    print('適合率: {0:.3f}'.format(precision_score(yy_true,yy_pred)))
+    
+    # 再現率算出
+    print('再現率: {0:.3f}'.format(recall_score(yy_true,yy_pred)))
+    
+    # F1値算出
+    print('F1: {0:.3f}'.format(f1_score(yy_true,yy_pred)))
 
     acc = cnt / all_nums
     print(acc)
